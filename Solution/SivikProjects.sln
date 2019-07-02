@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.489
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Statistics", "..\Source\Statistics\Statistics.csproj", "{03AEAE00-FC25-48A9-852C-CE96B8AD1CA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrabFrame", "..\Source\GrabFrame\GrabFrame.csproj", "{7165924D-8D56-45F0-83C2-1A3B5D8FEC77}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{03AEAE00-FC25-48A9-852C-CE96B8AD1CA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03AEAE00-FC25-48A9-852C-CE96B8AD1CA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03AEAE00-FC25-48A9-852C-CE96B8AD1CA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03AEAE00-FC25-48A9-852C-CE96B8AD1CA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7165924D-8D56-45F0-83C2-1A3B5D8FEC77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7165924D-8D56-45F0-83C2-1A3B5D8FEC77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7165924D-8D56-45F0-83C2-1A3B5D8FEC77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7165924D-8D56-45F0-83C2-1A3B5D8FEC77}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BDC0D2DE-B0F1-45F2-8125-65BE55537F6C}
+	EndGlobalSection
+EndGlobal
