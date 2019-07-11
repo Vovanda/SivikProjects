@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using DirectShowLib;
 
 namespace DirectShowHelper
@@ -12,6 +14,16 @@ namespace DirectShowHelper
       dsDevice.Mon.BindToObject(null, null, ref baseFilterIdentifier, out object videoSourceObject);
       return (IBaseFilter)videoSourceObject;
     }
+
+    public static string[] GetDevicesName()
+    {
+      return DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice).Select( x => x.Name).ToArray();
+    }
+
+    public static DsDevice[] GetDevices()
+    {
+      return DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice).ToArray();
+    }    
 
     public static void CheckHR(int hr) 
     {

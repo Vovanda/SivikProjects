@@ -39,6 +39,26 @@ namespace DirectShowHelper
       return graph;
     }
 
+    public static T AddFilters<T>(this T graph, params DShowObject<IBaseFilter>[] filters) where T : IFilterGraph
+    {
+      if (graph == null)
+      {
+        throw new ArgumentNullException(nameof(graph));
+      }
+
+      if (filters == null)
+      {
+        throw new ArgumentNullException(nameof(filters));
+      }
+
+      for (int i = 0; i < filters.Length; i++)
+      {
+        graph.AddFilter(filters[i].Object);
+      }
+
+      return graph;
+    }
+
     public static (T graph, IBaseFilter lastConnectedFilter) ConnectDirect<T>(this T graph, IBaseFilter first, IBaseFilter second, int idxOutPin, int idxInPin, AMMediaType pmt = null) where T : IFilterGraph
     {      
       if (graph != null && first != null && second != null)
@@ -51,8 +71,8 @@ namespace DirectShowHelper
       }
       throw new ArgumentNullException();
     }
-
-    public static (T graph, IBaseFilter lastConnectedFilter) NextConnectDirect<T>(this (T graph, IBaseFilter first) item, IBaseFilter nextFilter, int idxOutPin, int idxInPin, AMMediaType pmt = null) where T : IFilterGraph
+        
+    public static (T graph, IBaseFilter lastConnectedFilter) Next<T>(this (T graph, IBaseFilter first) item, IBaseFilter nextFilter, int idxOutPin, int idxInPin, AMMediaType pmt = null) where T : IFilterGraph
     {
       if (item.graph != null && item.first != null && nextFilter != null)
       {
@@ -65,6 +85,32 @@ namespace DirectShowHelper
       throw new ArgumentNullException();
     }
 
+    public static (T graph, DShowObject<IBaseFilter> lastConnectedFilter) ConnectDirect<T>(this T graph, DShowObject<IBaseFilter> first, DShowObject<IBaseFilter> second, int idxOutPin, int idxInPin, AMMediaType pmt = null) where T : IFilterGraph
+    {
+      if (graph != null && first != null && second != null)
+      {
+        var outPin = first.Object.GetPins((x) => x.dir == PinDirection.Output).Skip(idxOutPin).Take(1).FirstOrDefault();
+        var inPin = second.Object.GetPins((x) => x.dir == PinDirection.Input).Skip(idxInPin).Take(1).FirstOrDefault();
+        int hr = graph.ConnectDirect(outPin, inPin, pmt);
+        DSHelper.CheckHR(hr);
+        return (graph, second);
+      }
+      throw new ArgumentNullException();
+    }
+
+    public static (T graph, DShowObject<IBaseFilter> lastConnectedFilter) Next<T>(this (T graph, DShowObject<IBaseFilter> first) item, DShowObject<IBaseFilter> nextFilter, int idxOutPin, int idxInPin, AMMediaType pmt = null) where T : IFilterGraph
+    {
+      if (item.graph != null && item.first != null && nextFilter != null)
+      {
+        var outPin = item.first.Object.GetPins((x) => x.dir == PinDirection.Output).Skip(idxOutPin).Take(1).FirstOrDefault();
+        var inPin = nextFilter.Object.GetPins((x) => x.dir == PinDirection.Input).Skip(idxInPin).Take(1).FirstOrDefault();
+        int hr = item.graph.ConnectDirect(outPin, inPin, pmt);
+        DSHelper.CheckHR(hr);
+        return (item.graph, nextFilter);
+      }
+      throw new ArgumentNullException();
+    }
+    
     public static IEnumerable<IPin> GetPins(this IBaseFilter filter, Func<PinInfo, bool> predicate = null)
     {
       int hr = filter.EnumPins(out IEnumPins epins);
