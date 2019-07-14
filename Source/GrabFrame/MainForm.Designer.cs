@@ -32,6 +32,8 @@
       this.panel1 = new System.Windows.Forms.Panel();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
       this.camComboBox = new System.Windows.Forms.ToolStripComboBox();
+      this.panel2 = new System.Windows.Forms.Panel();
+      this.saveBtn = new System.Windows.Forms.Button();
       this.panel1.SuspendLayout();
       this.toolStrip1.SuspendLayout();
       this.SuspendLayout();
@@ -69,15 +71,36 @@
       // 
       // camComboBox
       // 
-      this.camComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.camComboBox.Name = "camComboBox";
       this.camComboBox.Size = new System.Drawing.Size(121, 25);
       this.camComboBox.SelectedIndexChanged += new System.EventHandler(this.OnCamComboBoxSelectedIndexChanged);
+      // 
+      // panel2
+      // 
+      this.panel2.BackColor = System.Drawing.Color.DarkSlateGray;
+      this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+      this.panel2.Location = new System.Drawing.Point(13, 321);
+      this.panel2.Name = "panel2";
+      this.panel2.Size = new System.Drawing.Size(130, 94);
+      this.panel2.TabIndex = 3;
+      // 
+      // saveBtn
+      // 
+      this.saveBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.saveBtn.Location = new System.Drawing.Point(621, 367);
+      this.saveBtn.Name = "saveBtn";
+      this.saveBtn.Size = new System.Drawing.Size(136, 48);
+      this.saveBtn.TabIndex = 2;
+      this.saveBtn.Text = "Сохранить";
+      this.saveBtn.UseVisualStyleBackColor = true;
+      this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
       // 
       // MainForm
       // 
       this.BackColor = System.Drawing.Color.PaleTurquoise;
       this.ClientSize = new System.Drawing.Size(769, 427);
+      this.Controls.Add(this.panel2);
+      this.Controls.Add(this.saveBtn);
       this.Controls.Add(this.canvas);
       this.Controls.Add(this.panel1);
       this.Name = "MainForm";
@@ -95,6 +118,8 @@
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.ToolStrip toolStrip1;
     private System.Windows.Forms.ToolStripComboBox camComboBox;
+    private System.Windows.Forms.Panel panel2;
+    private System.Windows.Forms.Button saveBtn;
   }
 }
 

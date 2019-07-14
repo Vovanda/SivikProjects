@@ -24,5 +24,16 @@ namespace GrabFrame
     }
 
     private readonly WebCamCapture _webCamCapture;
+
+    private void OnSaveBtnClick(object sender, System.EventArgs e)
+    {
+      panel1.BackgroundImage = _webCamCapture.GetBitmap();
+    }
+
+    private void saveBtn_Click(object sender, System.EventArgs e)
+    {
+
+      panel2.BackgroundImage = _webCamCapture.GetBitmap();
+    }
   }
 }
