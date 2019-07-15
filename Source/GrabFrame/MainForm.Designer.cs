@@ -28,12 +28,15 @@
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       this.canvas = new System.Windows.Forms.Panel();
       this.panel1 = new System.Windows.Forms.Panel();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
       this.camComboBox = new System.Windows.Forms.ToolStripComboBox();
       this.panel2 = new System.Windows.Forms.Panel();
       this.saveBtn = new System.Windows.Forms.Button();
+      this.timer1 = new System.Windows.Forms.Timer(this.components);
+      this.label1 = new System.Windows.Forms.Label();
       this.panel1.SuspendLayout();
       this.toolStrip1.SuspendLayout();
       this.SuspendLayout();
@@ -46,11 +49,12 @@
       this.canvas.Name = "canvas";
       this.canvas.Size = new System.Drawing.Size(769, 398);
       this.canvas.TabIndex = 0;
-      this.canvas.SizeChanged += new System.EventHandler(this.canvas_SizeChanged);
+      this.canvas.SizeChanged += new System.EventHandler(this.OnCanvasSizeChanged);
       // 
       // panel1
       // 
       this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+      this.panel1.Controls.Add(this.label1);
       this.panel1.Controls.Add(this.toolStrip1);
       this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
       this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -78,7 +82,7 @@
       // panel2
       // 
       this.panel2.BackColor = System.Drawing.Color.DarkSlateGray;
-      this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+      this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
       this.panel2.Location = new System.Drawing.Point(13, 321);
       this.panel2.Name = "panel2";
       this.panel2.Size = new System.Drawing.Size(130, 94);
@@ -93,7 +97,20 @@
       this.saveBtn.TabIndex = 2;
       this.saveBtn.Text = "Сохранить";
       this.saveBtn.UseVisualStyleBackColor = true;
-      this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
+      this.saveBtn.Click += new System.EventHandler(this.OnSaveBtnClick);
+      // 
+      // timer1
+      // 
+      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(181, 6);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(35, 13);
+      this.label1.TabIndex = 1;
+      this.label1.Text = "label1";
       // 
       // MainForm
       // 
@@ -120,6 +137,8 @@
     private System.Windows.Forms.ToolStripComboBox camComboBox;
     private System.Windows.Forms.Panel panel2;
     private System.Windows.Forms.Button saveBtn;
+    private System.Windows.Forms.Timer timer1;
+    private System.Windows.Forms.Label label1;
   }
 }
 

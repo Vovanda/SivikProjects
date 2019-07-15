@@ -6,7 +6,27 @@ namespace DirectShowHelper
 {
   public class DShowObject<T> : IDisposable     
     where T: class
-  { 
+  {
+    #region Cast to DShowObject<T>
+    public static explicit operator DShowObject<T>(Colour v) => Convert(v);
+    public static explicit operator DShowObject<T>(InfTee v) => Convert(v);
+    public static explicit operator DShowObject<T>(AVIDec v) => Convert(v);
+    public static explicit operator DShowObject<T>(SmartTee v) => Convert(v);
+    public static explicit operator DShowObject<T>(FilterGraph v) => Convert(v);
+    public static explicit operator DShowObject<T>(VideoRenderer v) => Convert(v);
+    public static explicit operator DShowObject<T>(SampleGrabber v) => Convert(v);
+    public static explicit operator DShowObject<T>(CaptureGraphBuilder2 v) => Convert(v);
+    #endregion
+
+    private static DShowObject<T> Convert<U>(U item) where U: class
+    {
+      if (item is T obj && obj != null)
+      {
+        return new DShowObject<T>(obj);
+      }
+      return null;
+    }
+
     public DShowObject(T obj)
     {
       Object = obj ?? throw new ArgumentNullException(nameof(obj));
@@ -44,68 +64,5 @@ namespace DirectShowHelper
     #endregion
 
     public T Object { get; private set; }
-       
-    public static explicit operator DShowObject<T>(CaptureGraphBuilder2 v)
-    {
-      if (v is T obj && obj != null)
-      {
-        return new DShowObject<T>(obj);
-      }
-        return null;
-    }
-
-    public static explicit operator DShowObject<T>(AVIDec v)
-    {
-      if (v is T obj && obj != null)
-      {
-        return new DShowObject<T>(obj);
-      }
-      return null;
-    }
-
-    public static explicit operator DShowObject<T>(SmartTee v)
-    {
-      if (v is T obj && obj != null)
-      {
-        return new DShowObject<T>(obj);
-      }
-      return null;
-    }
-
-    public static explicit operator DShowObject<T>(VideoRenderer v)
-    {
-      if (v is T obj && obj != null)
-      {
-        return new DShowObject<T>(obj);
-      }
-      return null;
-    }
-    
-    public static explicit operator DShowObject<T>(SampleGrabber v)
-    {
-      if (v is T obj && obj != null)
-      {
-        return new DShowObject<T>(obj);
-      }
-      return null;
-    }
-    
-    public static explicit operator DShowObject<T>(Colour v)
-    {
-      if (v is T obj && obj != null)
-      {
-        return new DShowObject<T>(obj);
-      }
-      return null;
-    }
-
-    public static explicit operator DShowObject<T>(FilterGraph v)
-    {
-      if (v is T obj && obj != null)
-      {
-        return new DShowObject<T>(obj);
-      }
-      return null;
-    }
   } 
 }

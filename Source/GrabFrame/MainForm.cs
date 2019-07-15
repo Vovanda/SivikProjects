@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace GrabFrame
 {
@@ -9,31 +10,38 @@ namespace GrabFrame
       InitializeComponent();
       _webCamCapture = new WebCamCapture(canvas.Handle, canvas.Width, canvas.Height);
       camComboBox.Items.AddRange(_webCamCapture.GetDevicesNames());
-      camComboBox.SelectedItem = WebCamCapture.NameOfNoneDevice; 
+      camComboBox.SelectedItem = WebCamCapture.NameOfNoneDevice;
+      timer1.Start();
     }
 
-    private void canvas_SizeChanged(object sender, System.EventArgs e)
+    private void OnCanvasSizeChanged(object sender, System.EventArgs e)
     {
       _webCamCapture.SetCanvasSize(canvas.Size);
     }
-
 
     private void OnCamComboBoxSelectedIndexChanged(object sender, System.EventArgs e)
     {
       _webCamCapture.SetCurentDevice((sender as ToolStripComboBox).SelectedItem.ToString());
     }
-
-    private readonly WebCamCapture _webCamCapture;
-
+        
     private void OnSaveBtnClick(object sender, System.EventArgs e)
     {
-      panel1.BackgroundImage = _webCamCapture.GetBitmap();
+      if (saveBtnActive)
+      {
+        saveBtnActive = false;
+        if (_webCamCapture.GetBitmap() is Bitmap image && image != null)
+        {
+          panel2.BackgroundImage = image;
+        }
+        saveBtnActive = true;
+      }
     }
+    private bool saveBtnActive = true;
+    private readonly WebCamCapture _webCamCapture;
 
-    private void saveBtn_Click(object sender, System.EventArgs e)
+    private void timer1_Tick(object sender, System.EventArgs e)
     {
-
-      panel2.BackgroundImage = _webCamCapture.GetBitmap();
+      label1.Text = _webCamCapture.FrameRate.ToString();
     }
   }
 }
