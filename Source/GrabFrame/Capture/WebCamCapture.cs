@@ -103,10 +103,8 @@ namespace GrabFrame
 
     private void BuildGraph()
     {
-      /*                         [AVIDec] -- [Colour] -- [SampleGraber]
-       *                        /
-       * [VSource] -- [Smart Tee] -- [AVIDec] -- [Colour] -- [VRender]
-       * 
+      /*  
+       * [VSource] -- [AVIDec] -- [SampleGraber] -- [Colour] -- [VRender]
        */
 
       filterGraph = (DShowObject<IFilterGraph2>)new FilterGraph();
@@ -133,9 +131,14 @@ namespace GrabFrame
 
         disposableObjects.AddRange(new[] { videoSource, aviDec, colour, grabber, render});
         filterGraph.Object.AddFilters(videoSource, aviDec, colour, grabber, render);
-       
+
+        /* Add a copy-filter, e.g. the ColorSpaceConverter.          
+         * Otherwise the samples will be allocated by the renderer
+         * in video memory and reading off from video mem can be slow
+         * (orders of magnitute slower than reading from system mem).
+         */
         filterGraph.Object.ConnectDirect(videoSource, aviDec, 0, 0)
-          .Next(colour, 0, 0).Next(grabber, 0, 0).Next(render, 0, 0);
+          .Next(grabber, 0, 0).Next(colour, 0, 0).Next(render, 0, 0);
 
         IVideoWindow vw = (IVideoWindow)filterGraph.Object;
         vw.put_Owner(Handle);
