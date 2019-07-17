@@ -73,15 +73,36 @@ namespace GrabFrame
 
     public IntPtr Handle { get; set; }
 
-    public void SetCanvasSize(int width, int height)
-    {
-      Width = width;
-      Height = height;
-      ((IVideoWindow)filterGraph?.Object)?.SetWindowPosition(0, 0, Width, Height);
-    }
-
     public void SetCanvasSize(Size size) => SetCanvasSize(size.Width, size.Height);
 
+    public void SetCanvasSize(int _width, int _height)
+    {
+      Width = _width;
+      Height = _height;
+      if (m_videoWidth > 0 && m_videoHeight > 0)
+      {
+        float x_scale = (float)Width / m_videoWidth;
+        float y_scale = (float)Height / m_videoHeight;
+
+        int width = Width;
+        int height = Height;
+
+        if (x_scale < y_scale)
+        {
+          height = width * m_videoHeight / m_videoWidth;
+        }
+        else if (x_scale > y_scale)
+        {
+          width = height * m_videoWidth / m_videoHeight;
+        }
+
+        int left = (Width - width) / 2;
+        int top = (Height - height) / 2;
+
+        ((IVideoWindow)filterGraph?.Object)?.SetWindowPosition(left, top, width, height);
+      }
+    }
+    
     public bool SetCurentDevice(string deviceName)
     {
       bool success = (DeviceIsExist(deviceName) || deviceName == NameOfNoneDevice) && deviceName != CurentDevice;
@@ -97,9 +118,6 @@ namespace GrabFrame
     private int Width { get; set; }
 
     private int Height { get; set; }
-
-   
-
 
     private void BuildGraph()
     {
@@ -129,7 +147,7 @@ namespace GrabFrame
         var grabber = new DShowObject<IBaseFilter>((IBaseFilter)sampleGrabber);
         var render = (DShowObject<IBaseFilter>)new VideoRenderer();
 
-        disposableObjects.AddRange(new[] { videoSource, aviDec, colour, grabber, render});
+        disposableObjects.AddRange(new[] { videoSource, aviDec, colour, grabber, render });
         filterGraph.Object.AddFilters(videoSource, aviDec, colour, grabber, render);
 
         /* Add a copy-filter, e.g. the ColorSpaceConverter.          
@@ -140,13 +158,15 @@ namespace GrabFrame
         filterGraph.Object.ConnectDirect(videoSource, aviDec, 0, 0)
           .Next(grabber, 0, 0).Next(colour, 0, 0).Next(render, 0, 0);
 
+        SaveSizeInfo(sampleGrabber);
+
         IVideoWindow vw = (IVideoWindow)filterGraph.Object;
         vw.put_Owner(Handle);
         vw.put_WindowStyle(WindowStyle.Child | WindowStyle.ClipSiblings | WindowStyle.ClipChildren);
-        vw.SetWindowPosition(0, 0, Width, Height);
+        SetCanvasSize(Width, Height);
 
         pBuilder.Object.RenderStream(PinCategory.Capture, MediaType.Video, videoSource, null, render.Object);
-        SaveSizeInfo(sampleGrabber);
+        
       }
       finally
       {
@@ -227,11 +247,10 @@ namespace GrabFrame
       {
         Debug.WriteLine(ex);
       }
-
     }
-    
+
     public ManualResetEvent m_PictureReady = new ManualResetEvent(false);
-    
+
     private DShowObject<IFilterGraph2> filterGraph;
     private IMediaControl mediaControl;
     private int m_videoWidth;

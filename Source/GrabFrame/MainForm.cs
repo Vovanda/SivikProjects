@@ -11,7 +11,8 @@ namespace GrabFrame
       _webCamCapture = new WebCamCapture(canvas.Handle, canvas.Width, canvas.Height);
       camComboBox.Items.AddRange(_webCamCapture.GetDevicesNames());
       camComboBox.SelectedItem = WebCamCapture.NameOfNoneDevice;
-      timer1.Start();
+      canvas.Dock = DockStyle.Fill;
+      timer.Start();
     }
 
     private void OnCanvasSizeChanged(object sender, System.EventArgs e)
@@ -39,9 +40,14 @@ namespace GrabFrame
     private bool saveBtnActive = true;
     private readonly WebCamCapture _webCamCapture;
 
-    private void timer1_Tick(object sender, System.EventArgs e)
+    private void OnTimerTick(object sender, System.EventArgs e)
     {
-      label1.Text = _webCamCapture.FrameRate.ToString();
+      frameLabel.Text = $"FPS: {_webCamCapture.FrameRate}";
+    }
+
+    private void sizeInfoLable_Click(object sender, System.EventArgs e)
+    {
+
     }
   }
 }
