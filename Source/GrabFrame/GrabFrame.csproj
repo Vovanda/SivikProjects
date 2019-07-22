@@ -57,6 +57,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -68,6 +69,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\DeviceManager.cs" />
+    <Compile Include="Common\Imaging.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Capture\SampleGrabberCB.cs" />
     <Compile Include="Capture\WebCamCapture.cs" />
@@ -79,12 +82,21 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -105,30 +117,27 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DirectShowLib">
-      <Version>1.0.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Properties\settings.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\size.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Sourse\DirectShowHelper\DirectShowHelper.csproj">
+    <None Include="Properties\webcam_black_64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\WebcamIsNotSelected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DirectShowHelper\DirectShowHelper.csproj">
       <Project>{13319099-b1d6-4415-940b-0b963e0c2300}</Project>
       <Name>DirectShowHelper</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\webcam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\picture-size.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\square-measument.png" />
+    <PackageReference Include="DirectShowLib">
+      <Version>1.0.0</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

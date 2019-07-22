@@ -12,21 +12,12 @@ using System.Threading;
 namespace GrabFrame
 {
   internal class WebCamCapture : IDisposable
-  {
-
-    public static readonly string NameOfNoneDevice = "(None)";
-
-    [DllImport("Kernel32.dll", EntryPoint = "RtlMoveMemory")]
-    private static extern void CopyMemory(IntPtr Destination, IntPtr Source, int Length);
-
+  {   
     public WebCamCapture(IntPtr handle, int width, int height)
     {
       Handle = handle;
       Width = width;
       Height = height;
-      _dsDevices = DSHelper.GetDevicesName()
-        .Zip(DSHelper.GetDevices(), (name, divice) => (name, divice))
-        .ToDictionary(x => x.name, x => x.divice);
       _grayscaleCB = new GrayScaleSGCallBack();
     }
 
@@ -38,12 +29,14 @@ namespace GrabFrame
 
     public void Start()
     {
-      CloseInterfaces();
-      if (CurrentDeviceIsActive && Handle != IntPtr.Zero)
-      {
-        BuildGraph();
-        mediaControl.Run();
-      }
+      IsRunning = true;
+      mediaControl?.Run();
+    }
+
+    public void Stop()
+    {
+      mediaControl?.Stop();
+      IsRunning = false;
     }
 
     public Bitmap GetBitmap()
@@ -52,7 +45,7 @@ namespace GrabFrame
       scan = _grayscaleCB.GetScan();
       if (scan != IntPtr.Zero)
       {
-        bitmapImage = new Bitmap(m_videoWidth, m_videoHeight, m_stride, PixelFormat.Format24bppRgb, scan);
+        bitmapImage = new Bitmap(VideoWidth, VideoHeight, _stride, PixelFormat.Format24bppRgb, scan);
         bitmapImage.RotateFlip(RotateFlipType.RotateNoneFlipY);
       }
       Marshal.FreeCoTaskMem(scan);
@@ -61,17 +54,22 @@ namespace GrabFrame
       return bitmapImage;
     }
 
-    public double FrameRate => _grayscaleCB.FrameRate;
+    public int VideoWidth { get; private set; }
 
-    public string CurentDevice { get; private set; } = NameOfNoneDevice;
+    public int VideoHeight { get; private set; }
 
+    public double FrameRate => IsRunning ? _grayscaleCB.FrameRate : 0;
+    
     public bool IsRunning { get; set; } = false;
-
-    public string[] GetDevicesNames() => _dsDevices.Keys.Append(NameOfNoneDevice).ToArray();
-
-    public bool CurrentDeviceIsActive => DeviceIsExist(CurentDevice);
-
-    public IntPtr Handle { get; set; }
+       
+    public IntPtr Handle {
+      get => _handle;
+      set
+      {
+        _handle = value;
+        ((IVideoWindow)filterGraph?.Object)?.put_Owner(_handle);
+      }
+    }
 
     public void SetCanvasSize(Size size) => SetCanvasSize(size.Width, size.Height);
 
@@ -79,47 +77,42 @@ namespace GrabFrame
     {
       Width = _width;
       Height = _height;
-      if (m_videoWidth > 0 && m_videoHeight > 0)
+      if (VideoWidth > 0 && VideoHeight > 0)
       {
-        float x_scale = (float)Width / m_videoWidth;
-        float y_scale = (float)Height / m_videoHeight;
+        float x_scale = (float)Width / VideoWidth;
+        float y_scale = (float)Height / VideoHeight;
 
         int width = Width;
         int height = Height;
 
         if (x_scale < y_scale)
         {
-          height = width * m_videoHeight / m_videoWidth;
+          height = width * VideoHeight / VideoWidth;
         }
         else if (x_scale > y_scale)
         {
-          width = height * m_videoWidth / m_videoHeight;
+          width = height * VideoWidth / VideoHeight;
         }
 
         int left = (Width - width) / 2;
         int top = (Height - height) / 2;
-
+        
         ((IVideoWindow)filterGraph?.Object)?.SetWindowPosition(left, top, width, height);
       }
     }
     
-    public bool SetCurentDevice(string deviceName)
+    public void SetCurentDevice(DsDevice device)
     {
-      bool success = (DeviceIsExist(deviceName) || deviceName == NameOfNoneDevice) && deviceName != CurentDevice;
-
-      if (success)
-      {
-        CurentDevice = deviceName;
-        Start();
-      }
-      return success;
+      CloseInterfaces();
+      BuildGraph(device);
+      Start();
     }
 
     private int Width { get; set; }
 
     private int Height { get; set; }
 
-    private void BuildGraph()
+    private void BuildGraph(DsDevice device)
     {
       /*  
        * [VSource] -- [AVIDec] -- [SampleGraber] -- [Colour] -- [VRender]
@@ -136,8 +129,8 @@ namespace GrabFrame
         int hr = pBuilder.Object.SetFiltergraph(filterGraph.Object);
         DSHelper.CheckHR(hr);
 
-
-        var videoSource = new DShowObject<IBaseFilter>(GetVideoSourceFilter());
+        var videoSourceFilter = DSHelper.GetVideoSourceBaseFilter(device);
+        var videoSource = new DShowObject<IBaseFilter>(videoSourceFilter);
         var aviDec = (DShowObject<IBaseFilter>)new AVIDec();
         var colour = (DShowObject<IBaseFilter>)new Colour();
 
@@ -161,7 +154,8 @@ namespace GrabFrame
         SaveSizeInfo(sampleGrabber);
 
         IVideoWindow vw = (IVideoWindow)filterGraph.Object;
-        vw.put_Owner(Handle);
+        
+        vw.put_Owner(_handle);
         vw.put_WindowStyle(WindowStyle.Child | WindowStyle.ClipSiblings | WindowStyle.ClipChildren);
         SetCanvasSize(Width, Height);
 
@@ -176,7 +170,7 @@ namespace GrabFrame
         }
       }
     }
-
+    
     private void SaveSizeInfo(ISampleGrabber sampGrabber)
     {
       int hr;
@@ -193,9 +187,9 @@ namespace GrabFrame
 
       // Grab the size info
       VideoInfoHeader videoInfoHeader = (VideoInfoHeader)Marshal.PtrToStructure(media.formatPtr, typeof(VideoInfoHeader));
-      m_videoWidth = videoInfoHeader.BmiHeader.Width;
-      m_videoHeight = videoInfoHeader.BmiHeader.Height;
-      m_stride = m_videoWidth * (videoInfoHeader.BmiHeader.BitCount / 8);
+      VideoWidth = videoInfoHeader.BmiHeader.Width;
+      VideoHeight = videoInfoHeader.BmiHeader.Height;
+      _stride = VideoWidth * (videoInfoHeader.BmiHeader.BitCount / 8);
 
       DsUtils.FreeAMMediaType(media);
       media = null;
@@ -219,15 +213,7 @@ namespace GrabFrame
       hr = sampGrabber.SetCallback(pCallBack, 1);
       DsError.ThrowExceptionForHR(hr);
     }
-
-
-
-
-
-    private IBaseFilter GetVideoSourceFilter() => CurrentDeviceIsActive ? DSHelper.GetVideoSourceBaseFilter(_dsDevices[CurentDevice]) : null;
-
-    private bool DeviceIsExist(string deviceName) => !string.IsNullOrEmpty(deviceName) && (_dsDevices.ContainsKey(deviceName));
-
+        
     private void CloseInterfaces()
     {
       try
@@ -253,11 +239,9 @@ namespace GrabFrame
 
     private DShowObject<IFilterGraph2> filterGraph;
     private IMediaControl mediaControl;
-    private int m_videoWidth;
-    private int m_videoHeight;
-    private int m_stride;
+    private int _stride;
     private IntPtr scan = IntPtr.Zero;
-    private readonly GrayScaleSGCallBack _grayscaleCB;
-    private readonly Dictionary<string, DsDevice> _dsDevices;
+    private IntPtr _handle = IntPtr.Zero;
+    private readonly GrayScaleSGCallBack _grayscaleCB;    
   }
 }

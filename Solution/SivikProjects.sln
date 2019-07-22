@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Statistics", "..\Source\Sta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrabFrame", "..\Source\GrabFrame\GrabFrame.csproj", "{7165924D-8D56-45F0-83C2-1A3B5D8FEC77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowHelper", "..\Sourse\DirectShowHelper\DirectShowHelper.csproj", "{13319099-B1D6-4415-940B-0B963E0C2300}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowHelper", "..\Source\DirectShowHelper\DirectShowHelper.csproj", "{13319099-B1D6-4415-940B-0B963E0C2300}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

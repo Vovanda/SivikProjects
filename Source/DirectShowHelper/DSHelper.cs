@@ -9,6 +9,9 @@ namespace DirectShowHelper
   {
     public static IBaseFilter GetVideoSourceBaseFilter(DsDevice dsDevice)
     {
+      if (dsDevice is null)
+        throw new ArgumentNullException();
+
       Guid baseFilterIdentifier = typeof(IBaseFilter).GUID;
       dsDevice.Mon.BindToObject(null, null, ref baseFilterIdentifier, out object videoSourceObject);
       return (IBaseFilter)videoSourceObject;

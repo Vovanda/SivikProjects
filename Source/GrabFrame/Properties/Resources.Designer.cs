@@ -83,9 +83,9 @@ namespace GrabFrame.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap square_measument {
+        internal static System.Drawing.Bitmap webcam_black_64 {
             get {
-                object obj = ResourceManager.GetObject("square_measument", resourceCulture);
+                object obj = ResourceManager.GetObject("webcam_black_64", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace GrabFrame.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap webcam {
+        internal static System.Drawing.Bitmap WebcamIsNotSelected {
             get {
-                object obj = ResourceManager.GetObject("webcam", resourceCulture);
+                object obj = ResourceManager.GetObject("WebcamIsNotSelected", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
