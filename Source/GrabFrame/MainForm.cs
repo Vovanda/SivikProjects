@@ -77,17 +77,17 @@ namespace GrabFrame
       SetInfoAboutPathToSaveImage();
       if (!PathToSaveImageNotExist && _webCamCapture.GetBitmap() is Bitmap image && image != null)
       {
-        string targetFormat = Properties.Settings.Default.ImageFormat.ToLower();
+        string targetFormat = Properties.Settings.Default.ImageFormat;
         string targetPath = GetTargetPathToFolder();
         string scanName = _deviceManager.SelectedDiviceName + "_scan_";        
         int scanIndex = GetNextIndexOfScan(targetPath, scanName);
 
-        if(!Directory.Exists(targetPath))
+        if (!Directory.Exists(targetPath))
         {
           Directory.CreateDirectory(targetPath);
         }
 
-        image.Save(Path.Combine(targetPath, $"{scanName}{scanIndex}.{targetFormat}"), Imaging.ParseImageFormat(targetFormat));
+        image.Save(Path.Combine(targetPath, $"{scanName}{scanIndex}.{targetFormat}"), Imaging.GetAllowedImageFormatByName(targetFormat));
       }
 
       #region Helper methods
@@ -103,7 +103,7 @@ namespace GrabFrame
       {
         if (Directory.Exists(targetPath))
         {
-          var rgx = new Regex($@"{scanName}(\d+)\.({string.Join("|", Imaging.AllowedImageFormats)})$", RegexOptions.IgnoreCase);
+          var rgx = new Regex($@"{scanName}(\d+)\.({string.Join("|", Imaging.AllowedImageFormatsNames)})$", RegexOptions.IgnoreCase);
           int lastScanIdx = Directory.GetFiles(targetPath, scanName + "*").Select(x => Path.GetFileName(x))
             .Select(x => rgx.Match(x)).Where(m => m.Success).Select(m => int.Parse(m.Groups[1].Value)).DefaultIfEmpty().Max();
           return lastScanIdx + 1;

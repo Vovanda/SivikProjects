@@ -11,7 +11,7 @@ namespace GrabFrame
     {
       InitializeComponent();
             
-      comboBoxImageFormats.Items.AddRange(Imaging.AllowedImageFormats);
+      comboBoxImageFormats.Items.AddRange(Imaging.AllowedImageFormatsNames);
       comboBoxImageFormats.Text = Properties.Settings.Default.ImageFormat;
       errorProvider.SetIconAlignment(textBoxSelectedPath, ErrorIconAlignment.MiddleLeft);
 
