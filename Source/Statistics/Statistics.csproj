@@ -56,13 +56,17 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppViewModel.cs">
-      <DependentUpon>App.xaml</DependentUpon>
+      <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\CountItemsInGroup.cs" />
-    <Compile Include="StatisticTabViewModels.cs" />
+    <Compile Include="StatisticTabViewModels.cs" >
+      <DependentUpon>StatisticGrid.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="StatisticGrid.xaml.cs">
       <DependentUpon>StatisticGrid.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -21,7 +21,9 @@ namespace Statistics.Context
             SELECT COUNT(*) as count, is_owner, confirmed, role, country
             FROM user
             WHERE role = 'CUSTOMER' AND is_owner = 1 AND confirmed = 1
-            GROUP BY country";
+            GROUP BY country
+            ORDER BY country DESC";
+
       _connection.Open();
       var command = new SQLiteCommand(commandText, _connection);
       foreach (DbDataRecord record in command.ExecuteReader())
@@ -45,7 +47,9 @@ namespace Statistics.Context
             SELECT COUNT(*) as count, is_owner, confirmed, role, country, region
             FROM user
             WHERE role = 'CUSTOMER' AND is_owner = 1 AND confirmed = 1 AND country = '{country}' 
-            GROUP BY region";
+            GROUP BY region
+            ORDER BY region";
+
       _connection.Open();
       var command = new SQLiteCommand(commandText, _connection);
       foreach (DbDataRecord record in command.ExecuteReader())
@@ -69,7 +73,9 @@ namespace Statistics.Context
             SELECT COUNT(*) as count, is_owner, confirmed, role, substr(purchase_date, 4, 2) as month, substr(purchase_date, 7, 4) as year
             FROM user
             WHERE role = 'CUSTOMER' AND is_owner = 1 AND confirmed = 1 AND year = '{year}'
-            GROUP BY month";
+            GROUP BY month
+            ORDER BY month";
+
       _connection.Open();
       var command = new SQLiteCommand(commandText, _connection);
       foreach (DbDataRecord record in command.ExecuteReader())
@@ -94,7 +100,9 @@ namespace Statistics.Context
       string commandText = @"
         SELECT DISTINCT role, substr(purchase_date, 7, 4) as year
         FROM user
-        WHERE role = 'CUSTOMER'";
+        WHERE role = 'CUSTOMER'
+        ORDER BY year";
+
       var command = new SQLiteCommand(commandText, _connection);
       var reader = command.ExecuteReader();
       foreach (DbDataRecord record in reader)
@@ -116,7 +124,9 @@ namespace Statistics.Context
       string commandText = @"
         SELECT DISTINCT role, country
         FROM user
-        WHERE role = 'CUSTOMER'";
+        WHERE role = 'CUSTOMER'
+        ORDER BY country DESC";
+
       var command = new SQLiteCommand(commandText, _connection);
       var reader = command.ExecuteReader();
       foreach (DbDataRecord record in reader)
