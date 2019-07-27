@@ -1,31 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using Statistics.Context;
+using Statistics.Data;
 
 namespace Statistics
 {
-  internal class StatisticTabViewModel : INotifyPropertyChanged
+  using StatisticQuery = Func<string, IEnumerable<CountItemsInGroup>>;
+
+  internal class StatisticOfRegistarionsViewModel : INotifyPropertyChanged
   {
-    public StatisticTabViewModel() : this(null)
+    public StatisticOfRegistarionsViewModel(StatisticQuery statisticQuery) : this(statisticQuery, null)
     { }
 
-    public StatisticTabViewModel(IEnumerable<QueryForGroup> queryItems)
+    public StatisticOfRegistarionsViewModel(StatisticQuery statisticQuery, IEnumerable<string> queryItems)
     {
+      _getStatistic = statisticQuery ?? throw new ArgumentNullException(nameof(statisticQuery));
       QueryItems = queryItems?.ToArray();
-      SelectedQuery = (QueryItems != null && QueryItems.Length > 0) ? QueryItems[0] : null;
+      SelectedQuery = QueryItemsIsExist ? QueryItems[0] : null;
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public QueryForGroup[] QueryItems { get; }
 
     public void OnPropertyChanged(string prop = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 
-    public ObservableCollection<CountItemsInGroup> Statistic { get; set; }
+    public event PropertyChangedEventHandler PropertyChanged;
+    
+    public string TabHeader { get; private set; }
 
-    public QueryForGroup SelectedQuery
+    public bool QueryItemsIsExist => QueryItems != null && QueryItems.Length > 0;
+
+    public string[] QueryItems { get; }
+
+    public string SelectedQuery
     {
       get => _selectedQuery;
       set
@@ -39,6 +45,10 @@ namespace Statistics
       }
     }
 
-    private QueryForGroup _selectedQuery;
+    public ObservableCollection<CountItemsInGroup> Statistic => new ObservableCollection<CountItemsInGroup>(_getStatistic(SelectedQuery));
+
+    private readonly StatisticQuery _getStatistic;
+
+    private string _selectedQuery;
   }
 }

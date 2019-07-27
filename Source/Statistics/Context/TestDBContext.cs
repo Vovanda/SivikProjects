@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
 using Devart.Data.SQLite;
-using System.ComponentModel;
+using Statistics.Data;
 
 namespace Statistics.Context
 {  
@@ -13,62 +13,81 @@ namespace Statistics.Context
       _connection = new SQLiteConnection(@"DataSource=test.db; Password=secret_key; Encryption=SQLCipher;");
     }
 
-    public List<CountItemsInGroup> GetStatisticOfCountInGroup(QueryForGroup query)
+    public List<CountItemsInGroup> GetStatisticOfRistrationsByCountry()
     {
       var resultList = new List<CountItemsInGroup>();
-      string commandText = GetSQLiteCommand(query);
+      string commandText = $@"
+            SELECT COUNT(*) as count, is_owner, confirmed, role, country
+            FROM user
+            WHERE role = 'CUSTOMER' AND is_owner = 1 AND confirmed = 1
+            GROUP BY country";
       _connection.Open();
       var command = new SQLiteCommand(commandText, _connection);
       foreach (DbDataRecord record in command.ExecuteReader())
       {
         int.TryParse(record["count"]?.ToString(), out int count);
-        var value = record[$"{query.GroupingType.GetDescription()}"]?.ToString();
+        var value = record["country"]?.ToString();
 
         if (!string.IsNullOrEmpty(value))
         {
-          resultList.Add(new CountItemsInGroup { GroupItemValue = value, Count = count, GroupingType = query.GroupingType });
+          resultList.Add(new CountItemsInGroup { GroupItemValue = value, Count = count});
         }
       }
       _connection.Close();
       return resultList;
     }
 
-    private string GetSQLiteCommand(QueryForGroup query)
+    public List<CountItemsInGroup> GetStatisticOfRistrationsByRegion(string country)
     {
-      switch (query.GroupingType)
+      var resultList = new List<CountItemsInGroup>();
+      string commandText = $@"
+            SELECT COUNT(*) as count, is_owner, confirmed, role, country, region
+            FROM user
+            WHERE role = 'CUSTOMER' AND is_owner = 1 AND confirmed = 1 AND country = '{country}' 
+            GROUP BY region";
+      _connection.Open();
+      var command = new SQLiteCommand(commandText, _connection);
+      foreach (DbDataRecord record in command.ExecuteReader())
       {
-        case GroupingType.Country:
-          {
-            return $@"
-            SELECT COUNT(*) as count, is_owner, confirmed, role, country as {GroupingType.Country.GetDescription()}
-            FROM user
-            WHERE role = 'CUSTOMER' AND is_owner = 1 AND confirmed = 1
-            GROUP BY {GroupingType.Country.GetDescription()}";
-          }
-        case GroupingType.Region:
-          {
-            return $@"
-            SELECT COUNT(*) as count, is_owner, confirmed, role, country, region as {GroupingType.Region.GetDescription()}
-            FROM user
-            WHERE role = 'CUSTOMER' AND is_owner = 1 AND confirmed = 1 AND country = '{query}' 
-            GROUP BY {GroupingType.Region.GetDescription()}";
+        int.TryParse(record["count"]?.ToString(), out int count);
+        var value = record["region"]?.ToString();
 
-          }
-        case GroupingType.Month:
-          {
-            return $@"
-            SELECT COUNT(*) as count, is_owner, confirmed, role, substr(purchase_date, 4, 2) as {GroupingType.Month.GetDescription()}, substr(purchase_date, 7, 4) as year
-            FROM user
-            WHERE role = 'CUSTOMER' AND is_owner = 1 AND confirmed = 1 AND year = '{query}'
-            GROUP BY {GroupingType.Month.GetDescription()}";
-          }
+        if (!string.IsNullOrEmpty(value))
+        {
+          resultList.Add(new CountItemsInGroup { GroupItemValue = value, Count = count});
+        }
       }
-      return string.Empty;
+      _connection.Close();
+      return resultList;
     }
 
-    public List<QueryForGroup> GetQueriesForGroupByMonth()
+    public List<CountItemsInGroup> GetStatisticOfRistrationsByMonth(string year)
     {
-      var resultList = new List<QueryForGroup>();
+      var resultList = new List<CountItemsInGroup>();
+      string commandText = $@"
+            SELECT COUNT(*) as count, is_owner, confirmed, role, substr(purchase_date, 4, 2) as month, substr(purchase_date, 7, 4) as year
+            FROM user
+            WHERE role = 'CUSTOMER' AND is_owner = 1 AND confirmed = 1 AND year = '{year}'
+            GROUP BY month";
+      _connection.Open();
+      var command = new SQLiteCommand(commandText, _connection);
+      foreach (DbDataRecord record in command.ExecuteReader())
+      {
+        int.TryParse(record["count"]?.ToString(), out int count);
+        var value = record["month"]?.ToString();
+
+        if (!string.IsNullOrEmpty(value))
+        {
+          resultList.Add(new CountItemsInGroup { GroupItemValue = value, Count = count});
+        }
+      }
+      _connection.Close();
+      return resultList;
+    }
+ 
+    public List<string> GetYearList()
+    {
+      var resultList = new List<string>();
       _connection.Open();
       string commandText = @"
         SELECT DISTINCT role, substr(purchase_date, 7, 4) as year
@@ -81,16 +100,16 @@ namespace Statistics.Context
         var year = record["year"]?.ToString();
         if (!string.IsNullOrEmpty(year))
         {
-          resultList.Add( new QueryForGroup { QueryValue = year, GroupingType = GroupingType.Month });
+          resultList.Add(year);
         }
       }
       _connection.Close();
       return resultList;
     }
 
-    public List<QueryForGroup> GetQueriesForGroupByRegion()
+    public List<string> GetCountryList()
     {
-      var resultList = new List<QueryForGroup>();
+      var resultList = new List<string>();
       _connection.Open();
       string commandText = @"
         SELECT DISTINCT role, country
@@ -103,7 +122,7 @@ namespace Statistics.Context
         var country = record["country"]?.ToString();
         if (!string.IsNullOrEmpty(country))
         {
-          resultList.Add(new QueryForGroup {QueryValue = country, GroupingType = GroupingType.Region });
+          resultList.Add(country);
         }
       }
       _connection.Close();
@@ -111,35 +130,5 @@ namespace Statistics.Context
     }
 
     private readonly SQLiteConnection _connection;
-  }
-
-  internal class QueryForGroup
-  {
-    public string QueryValue { get; set; }
-
-    public GroupingType GroupingType { get; set; }
-
-    public override string ToString() => QueryValue;
-  }
-
-  internal class CountItemsInGroup
-  {
-    public int Count { get; set; }
-
-    public string GroupItemValue { get; set; } 
-
-    public GroupingType GroupingType { get; set; }
-  }
-
-  internal enum GroupingType
-  {
-    [Description("Country")]
-    Country,
-
-    [Description("Region")]
-    Region,
-  
-    [Description("Month")]
-    Month
   }
 }

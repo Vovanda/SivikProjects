@@ -1,68 +1,25 @@
-﻿using Devart.Data.SQLite;
+﻿using System.Collections.ObjectModel;
 using Statistics.Context;
-using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace Statistics
 {
-  internal class AppViewModel : IDisposable
+  internal class AppViewModel
   {
     public AppViewModel(TestDbContext dbContext)
     {
       _dbContext = dbContext;
+
+      var statisticByCountries = new StatisticOfRegistarionsViewModel((x) => dbContext.GetStatisticOfRistrationsByCountry());
+      var statisticByMonths = new StatisticOfRegistarionsViewModel((year) => dbContext.GetStatisticOfRistrationsByMonth(year), dbContext.GetYearList());
+      var statisticByRegions = new StatisticOfRegistarionsViewModel((country) => dbContext.GetStatisticOfRistrationsByRegion(country), dbContext.GetCountryList());
      
-      var StatisticByCountries = new StatisticTabViewModel()
-      {
-        Statistic = new ObservableCollection<CountItemsInGroup>(dbContext.GetStatisticOfCountInGroup(new QueryForGroup {GroupingType = GroupingType.Country }))
-      };
-      var StatisticByRegions = new StatisticTabViewModel(dbContext.GetQueriesForGroupByRegion());
-      var StatisticByMonths = new StatisticTabViewModel(dbContext.GetQueriesForGroupByMonth());
+      StatisticTabs = new ObservableCollection<StatisticOfRegistarionsViewModel> { statisticByCountries, statisticByRegions, statisticByMonths };
 
-      StatisticTabs = new ObservableCollection<StatisticTabViewModel> { StatisticByCountries, StatisticByRegions, StatisticByMonths };
-
-      foreach(var tab in StatisticTabs)
-      {
-        tab.PropertyChanged += StatisticByRegions_PropertyChanged;
-      }
+      SelectedTab = statisticByCountries;
     }
 
-    #region Dispose
-    public void Dispose()
-    {
-      Dispose(true);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (disposed)
-      {
-        foreach (var tab in StatisticTabs)
-        {
-          tab.PropertyChanged -= StatisticByRegions_PropertyChanged;
-        }
-        disposed = false;
-      }
-    }
-    private bool disposed;
-
-    #endregion
-
-    public ObservableCollection<StatisticTabViewModel> StatisticTabs { get; set; }
-
-    private void StatisticByRegions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-      if (e.PropertyName == nameof(StatisticTabViewModel.SelectedQuery))
-      {
-        if (sender is StatisticTabViewModel statisticTab && statisticTab != null)
-        {
-          if (statisticTab.SelectedQuery != null)
-          {
-            statisticTab.Statistic = new ObservableCollection<CountItemsInGroup>(_dbContext.GetStatisticOfCountInGroup(statisticTab.SelectedQuery));
-          }
-        }
-      }
-    }
+    public StatisticOfRegistarionsViewModel SelectedTab { get; set; }
+    public ObservableCollection<StatisticOfRegistarionsViewModel> StatisticTabs { get; set; }
 
     private readonly TestDbContext _dbContext;
   }

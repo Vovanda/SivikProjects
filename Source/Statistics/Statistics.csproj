@@ -59,8 +59,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\StatisticModels.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Data\CountItemsInGroup.cs" />
     <Compile Include="StatisticTabViewModels.cs" />
     <Compile Include="StatisticTab.xaml.cs">
       <DependentUpon>StatisticTab.xaml</DependentUpon>

@@ -71,7 +71,6 @@
   <ItemGroup>
     <Compile Include="Common\DeviceManager.cs" />
     <Compile Include="Common\Imaging.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="Capture\SampleGrabberCB.cs" />
     <Compile Include="Capture\WebCamCapture.cs" />
     <Compile Include="MainForm.cs">

@@ -7,28 +7,12 @@
         mc:Ignorable="d"
         Title="Статистика" Height="450" Width="800">
     <Grid>
-        <TabControl ItemsSource="{Binding StatisticTabs}">
+        <TabControl ItemsSource="{Binding StatisticTabs}" SelectedItem="{Binding SelectedTab}">
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <local:StatisticGrid/>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
-        
-        <!--<TabItem Header="Статистика по регионам">
-                <TabItem.Content>
-                    <local:StatisticGrid DataContext="{Binding StatisticByCountries}"/>
-                </TabItem.Content>
-            </TabItem>
-            <TabItem Header="Статистика по странам">
-                <TabItem.Content>
-                    <local:StatisticGrid DataContext="{Binding StatisticByRegions}"/>
-                </TabItem.Content>
-            </TabItem>
-            <TabItem Header="Статистика по месяцам">
-                <TabItem.Content>
-                    <local:StatisticGrid DataContext="{Binding StatisticsByMonths}"/>
-                </TabItem.Content>
-            </TabItem>-->
     </Grid>
 </Window>
