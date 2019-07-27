@@ -15,6 +15,17 @@
             <RowDefinition/>
         </Grid.RowDefinitions>        
         <ComboBox Grid.Row="0" ItemsSource="{Binding QueryItems}" Visibility="{Binding Path=QueryItemsIsExist, Converter={StaticResource VisibleIfTrueConverter}}" SelectedItem="{Binding SelectedQuery}" HorizontalAlignment="Left" />
-        <DataGrid Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="True" ItemsSource="{Binding Statistic}" />
+        <DataGrid Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding Statistic}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding GroupItemValue}">
+                    <DataGridTextColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DataContext.GroupColumnHeader, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                        </DataTemplate>
+                    </DataGridTextColumn.HeaderTemplate>
+                </DataGridTextColumn>
+                        <DataGridTextColumn Header="Кол. регистраций" Binding="{Binding Count}" Width="80" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

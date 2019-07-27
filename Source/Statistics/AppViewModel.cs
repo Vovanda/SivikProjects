@@ -9,18 +9,19 @@ namespace Statistics
     {
       _dbContext = dbContext;
 
-      var statisticByCountries = new StatisticOfRegistarionsViewModel((x) => dbContext.GetStatisticOfRistrationsByCountry());
-      var statisticByMonths = new StatisticOfRegistarionsViewModel((year) => dbContext.GetStatisticOfRistrationsByMonth(year), dbContext.GetYearList());
-      var statisticByRegions = new StatisticOfRegistarionsViewModel((country) => dbContext.GetStatisticOfRistrationsByRegion(country), dbContext.GetCountryList());
-     
-      StatisticTabs = new ObservableCollection<StatisticOfRegistarionsViewModel> { statisticByCountries, statisticByRegions, statisticByMonths };
-
-      SelectedTab = statisticByCountries;
+      StatisticByCountry = new StatisticOfRegistarionsViewModel((x) => dbContext.GetStatisticOfRistrationsByCountry()) { GroupColumnHeader = "Страна" };
+      StatisticByRegion = new StatisticOfRegistarionsViewModel((country) => dbContext.GetStatisticOfRistrationsByRegion(country), dbContext.GetCountryList()) { GroupColumnHeader = "Регион" };
+      StatisticByMonth = new StatisticOfRegistarionsViewModel((year) => dbContext.GetStatisticOfRistrationsByMonth(year), dbContext.GetYearList()) { GroupColumnHeader = "Месяц" };
     }
 
-    public StatisticOfRegistarionsViewModel SelectedTab { get; set; }
-    public ObservableCollection<StatisticOfRegistarionsViewModel> StatisticTabs { get; set; }
+    public StatisticOfRegistarionsViewModel StatisticByCountry { get; }
+
+    public StatisticOfRegistarionsViewModel StatisticByRegion{ get; }
+
+    public StatisticOfRegistarionsViewModel StatisticByMonth { get; }
+
 
     private readonly TestDbContext _dbContext;
+
   }
 }

@@ -61,8 +61,8 @@
     </Compile>
     <Compile Include="Data\CountItemsInGroup.cs" />
     <Compile Include="StatisticTabViewModels.cs" />
-    <Compile Include="StatisticTab.xaml.cs">
-      <DependentUpon>StatisticTab.xaml</DependentUpon>
+    <Compile Include="StatisticGrid.xaml.cs">
+      <DependentUpon>StatisticGrid.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -77,7 +77,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="StatisticTab.xaml">
+    <Page Include="StatisticGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -20,6 +20,6 @@ namespace Statistics
   /// </summary>
   public partial class StatisticGrid : UserControl
   {
-    public StatisticGrid() =>    InitializeComponent();
+    public StatisticGrid() => InitializeComponent();
   }
 }

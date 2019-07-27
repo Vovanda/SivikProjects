@@ -31,6 +31,8 @@ namespace Statistics
 
     public string[] QueryItems { get; }
 
+    public string GroupColumnHeader { get; set; }
+
     public string SelectedQuery
     {
       get => _selectedQuery;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
+using System.Globalization;
 using Devart.Data.SQLite;
 using Statistics.Data;
 
@@ -54,7 +55,7 @@ namespace Statistics.Context
 
         if (!string.IsNullOrEmpty(value))
         {
-          resultList.Add(new CountItemsInGroup { GroupItemValue = value, Count = count});
+          resultList.Add(new CountItemsInGroup { GroupItemValue = value, Count = count, });
         }
       }
       _connection.Close();
@@ -76,9 +77,10 @@ namespace Statistics.Context
         int.TryParse(record["count"]?.ToString(), out int count);
         var value = record["month"]?.ToString();
 
-        if (!string.IsNullOrEmpty(value))
+        if (int.TryParse(value, out int month))
         {
-          resultList.Add(new CountItemsInGroup { GroupItemValue = value, Count = count});
+          string monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
+          resultList.Add(new CountItemsInGroup { GroupItemValue = monthName, Count = count});
         }
       }
       _connection.Close();

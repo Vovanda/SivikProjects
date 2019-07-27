@@ -5,14 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Statistics"
         mc:Ignorable="d"
-        Title="Статистика" Height="450" Width="800">
+        Title="Формирование статистики" Height="450" Width="800">
     <Grid>
-        <TabControl ItemsSource="{Binding StatisticTabs}" SelectedItem="{Binding SelectedTab}">
-            <TabControl.ContentTemplate>
-                <DataTemplate>
-                    <local:StatisticGrid/>
-                </DataTemplate>
-            </TabControl.ContentTemplate>
+        <TabControl>
+            <TabItem Header="Статистика регистраций по странам" IsSelected="True">
+                <TabItem.Content>
+                    <local:StatisticGrid DataContext="{Binding StatisticByCountry}"/>
+                </TabItem.Content>
+            </TabItem>
+            <TabItem Header="Статистика регистраций по регионам">
+                <TabItem.Content>
+                    <local:StatisticGrid DataContext="{Binding StatisticByRegion}"/>
+                    </TabItem.Content>
+            </TabItem>
+            <TabItem Header="Статистика регистраций по месяцам">
+                <TabItem.Content>
+                    <local:StatisticGrid DataContext="{Binding StatisticByMonth}"/>
+                </TabItem.Content>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

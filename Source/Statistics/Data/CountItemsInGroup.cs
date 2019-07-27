@@ -2,8 +2,8 @@
 {
   internal class CountItemsInGroup
   {
-    public int Count { get; set; }
+    public object GroupItemValue { get; set; }
 
-    public string GroupItemValue { get; set; }
+    public int Count { get; set; }
   }
 }
